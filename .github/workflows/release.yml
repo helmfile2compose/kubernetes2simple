@@ -1,19 +1,24 @@
-name: Release
+name: Build & Upload Assets
 
 on:
-  push:
-    tags:
-      - 'v*'
+  release:
+    types: [published]
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-      - run: pip install pyyaml cryptography
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pyyaml cryptography
 
       - name: Fetch build-distribution.py
         run: |
@@ -31,6 +36,7 @@ jobs:
             --ignore-compatibility-errors cert-manager \
             keycloak cert-manager trust-manager servicemonitor \
             nginx traefik bitnami
+          ls -la .h2c/extensions/
 
       - name: Build kubernetes2simple.py
         run: |
@@ -38,10 +44,9 @@ jobs:
             --extensions-dir .h2c/extensions \
             --base-distribution helmfile2compose
 
-      - name: Create release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            kubernetes2simple.py
-            kubernetes2simple.sh
-          generate_release_notes: false
+      - name: Upload release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release upload "${{ github.event.release.tag_name }}" \
+            kubernetes2simple.py kubernetes2simple.sh
