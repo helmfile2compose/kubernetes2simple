@@ -34,8 +34,7 @@ jobs:
         run: |
           python h2c-manager.py --no-distribution \
             keycloak cert-manager trust-manager servicemonitor \
-            nginx traefik bitnami \
-            --ignore-compatibility-errors cert-manager
+            nginx traefik bitnami
           ls -la .h2c/extensions/
 
       - name: Build kubernetes2simple.py
