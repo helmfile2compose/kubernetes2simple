@@ -5,7 +5,7 @@
 You have a Kubernetes project. You want to run it locally with `docker compose`. You don't want to think about it.
 
 ```bash
-curl -fsSL https://github.com/helmfile2compose/kubernetes2simple/releases/latest/download/kubernetes2simple.sh -o k2s.sh
+curl -fsSL https://raw.githubusercontent.com/helmfile2compose/kubernetes2simple/main/kubernetes2simple.sh -o k2s.sh
 chmod +x k2s.sh
 ./k2s.sh
 docker compose up -d
