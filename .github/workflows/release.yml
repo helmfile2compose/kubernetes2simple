@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pyyaml cryptography
+
+      - name: Fetch build-distribution.py
+        run: |
+          curl -fsSL -o build-distribution.py \
+            https://github.com/helmfile2compose/h2c-core/releases/latest/download/build-distribution.py
+
+      - name: Fetch h2c-manager
+        run: |
+          curl -fsSL -o h2c-manager.py \
+            https://raw.githubusercontent.com/helmfile2compose/h2c-manager/main/h2c-manager.py
+
+      - name: Download extensions
+        run: |
+          python h2c-manager.py --no-distribution \
+            --ignore-compatibility-errors cert-manager \
+            keycloak cert-manager trust-manager servicemonitor \
+            nginx traefik bitnami
+
+      - name: Build kubernetes2simple.py
+        run: |
+          python build-distribution.py kubernetes2simple \
+            --extensions-dir .h2c/extensions \
+            --base-distribution helmfile2compose
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            kubernetes2simple.py
+            kubernetes2simple.sh
+          generate_release_notes: false
