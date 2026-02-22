@@ -93,6 +93,15 @@ github_latest_tag() {
 }
 
 # ---------------------------------------------------------------------------
+# curl
+# ---------------------------------------------------------------------------
+ensure_curl() {
+    if ! command -v curl &>/dev/null; then
+        fail "curl not found. Install curl and try again."
+    fi
+}
+
+# ---------------------------------------------------------------------------
 # Python 3.10+
 # ---------------------------------------------------------------------------
 ensure_python() {
@@ -311,6 +320,7 @@ main() {
 
     echo ""
     info "--- Bootstrap ---"
+    ensure_curl
     ensure_python
     ensure_python_deps
     ensure_k2s_script
