@@ -258,10 +258,20 @@ render_helmfile() {
     local env_flag=()
     if [[ -n "$HELMFILE_ENV" ]]; then
         env_flag=(-e "$HELMFILE_ENV")
+    elif [[ ! -f "$K2S_DIR/.ignoreNoHelmfileEnvironment" ]]; then
+        warn "No --env specified. Helmfile projects often require an environment."
+        warn "If this fails, re-run with: ./k2s.sh --env <environment>"
+        printf "${_yellow}[k2s]${_nc} Press Enter to continue without an environment, or Ctrl+C to abort... "
+        read -r
     fi
 
     info "Rendering helmfile..."
     "$HELMFILE" -f "$helmfile_path" "${env_flag[@]}" template --output-dir "$K2S_RENDER" >/dev/null 2>&1
+
+    # Helmfile succeeded without --env — don't warn next time
+    if [[ -z "$HELMFILE_ENV" ]]; then
+        touch "$K2S_DIR/.ignoreNoHelmfileEnvironment"
+    fi
 }
 
 render_chart() {
