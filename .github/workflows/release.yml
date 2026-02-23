@@ -20,27 +20,22 @@ jobs:
       - name: Install dependencies
         run: pip install pyyaml cryptography
 
-      - name: Fetch build-distribution.py
+      - name: Fetch build tools
         run: |
           curl -fsSL -o build-distribution.py \
             https://raw.githubusercontent.com/helmfile2compose/h2c-core/main/build-distribution.py
-
-      - name: Fetch h2c-manager
-        run: |
           curl -fsSL -o h2c-manager.py \
             https://raw.githubusercontent.com/helmfile2compose/h2c-manager/main/h2c-manager.py
 
       - name: Download extensions
         run: |
-          python h2c-manager.py --no-distribution \
-            keycloak cert-manager trust-manager servicemonitor \
-            nginx traefik bitnami
-          ls -la .h2c/extensions/
+          extensions=$(python -c "import json; print(' '.join(json.load(open('distribution.json'))['extensions']))")
+          python h2c-manager.py --no-distribution -d .build $extensions
 
       - name: Build kubernetes2simple.py
         run: |
           python build-distribution.py kubernetes2simple \
-            --extensions-dir .h2c/extensions \
+            --extensions-dir .build/extensions \
             --base-distribution helmfile2compose
 
       - name: Upload release assets

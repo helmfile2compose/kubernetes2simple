@@ -1,0 +1,12 @@
+{
+  "base": "helmfile2compose",
+  "extensions": [
+    "keycloak",
+    "cert-manager",
+    "trust-manager",
+    "servicemonitor",
+    "nginx",
+    "traefik",
+    "bitnami"
+  ]
+}
