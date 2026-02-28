@@ -18,7 +18,7 @@ K2S_BIN="$K2S_DIR/bin"
 K2S_VENV="$K2S_DIR/venv"
 K2S_SCRIPT="$K2S_DIR/kubernetes2simple.py"
 K2S_RENDER="$K2S_DIR/rendered"
-K2S_REPO="helmfile2compose/kubernetes2simple"
+K2S_REPO="dekubeio/kubernetes2simple"
 
 # ---------------------------------------------------------------------------
 # Output
